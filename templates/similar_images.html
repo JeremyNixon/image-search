@@ -6,7 +6,11 @@
     <title>Flask Image Grid</title>
     <script>
         function onImageClick(imagePath) {
-            window.location.href = '/similar-images?image_path=' + encodeURIComponent(imagePath);
+            fetch('/similar-images?image_path=' + encodeURIComponent(imagePath))
+                .then(response => response.text())
+                .then(html => {
+                    document.body.innerHTML = html;
+                });
         }
     </script>  
     <style>
@@ -37,7 +41,7 @@
             {% set url = url_for('static', filename=image) %}
             {% set card_class = 'card span-' ~ span ~ ' c-1' %}
             <div style="background-image: url({{ url }})" class="{{ card_class }}" onclick="onImageClick('{{ image }}')"></div>
-         {% endfor %}
+        {% endfor %}
     </div>
 </body>
 </html>
