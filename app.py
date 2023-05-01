@@ -14,8 +14,15 @@ import base64
 import io
 import faiss
 import pickle
+<<<<<<< HEAD
+=======
+import time
+from transformers import CLIPProcessor, CLIPModel
+>>>>>>> bb3cc5d (make code run on one machine)
 
 app = Flask(__name__)
+clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 def weighted_rand(spec):
     i, sum = 0, 0
@@ -58,6 +65,29 @@ def find_nearest_paths(input_path, k=100):
     nearest_paths = [index_to_path[idx] for idx in indexes.flatten()]
     return [p.split('static/')[1] for p in nearest_paths]
 
+<<<<<<< HEAD
+=======
+def embed_text(text):
+    inputs = processor(text=texts, return_tensors="pt", padding=True, truncation=True)
+    with torch.no_grad():
+            embedding = clip_model.get_text_features(**inputs).numpy().tolist()
+    return embedding
+
+@app.route('/search', methods=['GET'])
+def query_search():
+    start = time.time()
+    search_query = request.args.get('query')
+    print("Search query received:", search_query, time.time()-start, flush=True)
+    query_embedding = embed_text(search_query)
+    distances, indexes = ann_search(query_embedding, 50)
+    # Convert the indexes to paths
+    nearest_paths = [index_to_path[idx] for idx in indexes.flatten()]
+    similar_image_paths = [p.split('static/')[1] for p in nearest_paths]    
+    print("Similar paths found", time.time()-start, flush=True)
+    return render_template('similar_images.html', images=similar_image_paths, weighted_rand=weighted_rand)
+
+
+>>>>>>> bb3cc5d (make code run on one machine)
 @app.route('/similar-images')
 def similar_images():
     image_path = request.args.get('image_path')
