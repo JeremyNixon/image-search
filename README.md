@@ -18,3 +18,5 @@ The webapp will be up and running at either localhost or at your server's IP add
 ## Installation:
 
 ```git clone git@github.com:JeremyNixon/semantic-image-search.git```
+```cd semantic-image-search```
+```pip install -r requirements.txt```
