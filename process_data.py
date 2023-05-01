@@ -12,12 +12,7 @@ import base64
 import io
 import faiss
 import pickle
-import os
 import io
-from PIL import Image
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData, Table, Column, String, LargeBinary, DateTime, func
 from transformers import CLIPTokenizerFast, CLIPProcessor, CLIPModel
 
 def find_images_in_folder(folder_path, image_extensions=('*.jpg', '*.jpeg', '*.png', '*.gif')):
