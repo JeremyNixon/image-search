@@ -76,7 +76,8 @@ for p in range(int(len(full_paths)/10)):
         processed_paths += full_paths[i:i+10]
     except:
         pass
-    if i % 1000 == 0:
-        write_data()
     i += 10
+    if i % 1000 == 0:
+        write_data()    
+write_data()
     
