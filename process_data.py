@@ -23,7 +23,10 @@ def find_images_in_folder(folder_path, image_extensions=('*.jpg', '*.jpeg', '*.p
                 full_filepath = os.path.join(root, filename)
                 image_files.append((full_filepath, filename))
     return image_files
-paths = find_images_in_folder('/home/ga/static/')
+
+pwd = os.getcwd()
+relative_path = os.path.join(pwd, 'static/')
+paths = find_images_in_folder(relative_path)
 
 def embed_image(image_path_or_paths):
     if isinstance(image_path_or_paths, str):
