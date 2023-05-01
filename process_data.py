@@ -15,6 +15,9 @@ import pickle
 import io
 from transformers import CLIPTokenizerFast, CLIPProcessor, CLIPModel
 
+clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
+processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+
 def find_images_in_folder(folder_path, image_extensions=('*.jpg', '*.jpeg', '*.png', '*.gif')):
     image_files = []
     for root, _, files in os.walk(folder_path):
@@ -71,13 +74,10 @@ i = 0
 for p in range(int(len(full_paths)/10)):
     if i % 100 == 0:
         print(p)
-    try:
-        embeddings += embed_image(full_paths[i:i+10])
-        processed_paths += full_paths[i:i+10]
-    except:
-        pass
+    embeddings += embed_image(full_paths[i:i+10])
+    processed_paths += full_paths[i:i+10]
     i += 10
-    if i % 1000 == 0:
+    if i % 10 == 0:
         write_data()    
 write_data()
     

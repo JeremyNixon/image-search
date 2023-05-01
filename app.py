@@ -63,7 +63,7 @@ def find_nearest_paths(input_path, k=100):
     return [p.split('static/')[1] for p in nearest_paths]
 
 def embed_text(text):
-    inputs = processor(text=texts, return_tensors="pt", padding=True, truncation=True)
+    inputs = processor(text=text, return_tensors="pt", padding=True, truncation=True)
     with torch.no_grad():
             embedding = clip_model.get_text_features(**inputs).numpy().tolist()
     return embedding
