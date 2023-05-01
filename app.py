@@ -4,17 +4,10 @@ from random import random
 import numpy as np
 import fnmatch
 import os
-import pandas as pd
-import os
-from PIL import Image
-import time
 import torch
-import requests
-import base64
-import io
 import faiss
 import pickle
-import time
+import random
 from transformers import CLIPProcessor, CLIPModel
 
 app = Flask(__name__)
@@ -23,11 +16,10 @@ processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
 
 def weighted_rand(spec):
     i, sum = 0, 0
-    r = random()
+    r = random.random()
     for i in spec:
         sum += spec[i]
-        if r <= sum:
-            return int(i)
+        if r <= sum: return int(i)
 
 def load_data(file_path):
     with open(file_path, 'rb') as f:
@@ -48,9 +40,7 @@ def find_images_in_folder(folder_path, image_extensions=('*.jpg', '*.jpeg', '*.p
 def search(embedding, k=5):
     # Ensure the input embedding has the correct data type
     embedding = np.array(embedding).astype('float32').reshape(1, -1)
-    # Perform the search
-    distances, indexes = faiss_index.search(embedding, k)
-    return distances, indexes
+    return faiss_index.search(embedding, k)
 
 def find_nearest_paths(input_path, k=100):    
     # Get the embedding for the input path
@@ -65,22 +55,15 @@ def find_nearest_paths(input_path, k=100):
 def embed_text(text):
     inputs = processor(text=text, return_tensors="pt", padding=True, truncation=True)
     with torch.no_grad():
-            embedding = clip_model.get_text_features(**inputs).numpy().tolist()
-    return embedding
+        return clip_model.get_text_features(**inputs).numpy().tolist()
 
 @app.route('/search', methods=['GET'])
 def query_search():
-    start = time.time()
-    search_query = request.args.get('query')
-    print("Search query received:", search_query, time.time()-start, flush=True)
-    query_embedding = embed_text(search_query)
+    query = request.args.get('query')
+    query_embedding = embed_text(query)
     distances, indexes = ann_search(query_embedding, 50)
-    # Convert the indexes to paths
-    nearest_paths = [index_to_path[idx] for idx in indexes.flatten()]
-    similar_image_paths = [p.split('static/')[1] for p in nearest_paths]    
-    print("Similar paths found", time.time()-start, flush=True)
+    similar_image_paths = [index_to_path[idx].split('static/')[1] for idx in indexes.flatten()]
     return render_template('similar_images.html', images=similar_image_paths, weighted_rand=weighted_rand)
-
 
 @app.route('/similar-images')
 def similar_images():
@@ -92,8 +75,8 @@ def similar_images():
 @app.route('/nearest_images')
 def nearest_images():
     input_path = request.args.get('path')
-    img_paths = find_nearest_paths(input_path)
-    return render_template('index.html', images=img_paths)
+    nearest_image_paths = find_nearest_paths(input_path)
+    return render_template('index.html', images=nearest_image_paths)
 
 @app.route('/')
 def index():

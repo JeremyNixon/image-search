@@ -8,7 +8,7 @@ The model uses CLIP embeddings and FAISS to take textual search queries and to n
 Add the images you'd like to index to the static/ folder.
 Run the indexer.
 
-```python3 processdata.py```
+```python3 process_data.py```
 
 When indexing is complete, start the server:
 ```gunicorn3 app:app```

@@ -48,13 +48,7 @@ full_paths = [p[0] for p in paths]
 processed_paths = []
 embeddings = []
 def write_data():
-    np_embeddings = np.array(embeddings)
-    print(np_embeddings.shape)
-    # Assuming you already have your embeddings as np_embeddings
     np_embeddings = np.array(embeddings).astype('float32')  # Faiss requires float32 data type
-    print(np_embeddings.shape)
-    # (169, 512)
-
     # Create a flat index using the L2 distance metric (Euclidean distance)
     index = faiss.IndexFlatL2(np_embeddings.shape[1])
     # Add the embeddings to the index
